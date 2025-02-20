@@ -38,17 +38,21 @@
       border-right: 2px solid lavender;
     }
     #advance {
-      font-size: 1.2rem;
-      cursor: pointer;
-      padding: 10px 20px;
-      border: 2px solid lavender;
-      border-radius: 5px;
-      transition: background 0.3s;
-      display: inline-block;
-    }
-    #advance:hover {
-      background: rgba(230, 230, 250, 0.2);
-    }
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 10px 20px;
+  border: 2px solid lavender;
+  border-radius: 5px;
+  transition: background 0.3s, border-color 0.3s, color 0.3s;
+  display: inline-block;
+  color: lavender;
+  background: transparent;
+}
+#advance:hover {
+  background: #4B0082; /* dark purple */
+  border-color: #4B0082;
+  color: #fff;
+}
   </style>
 </head>
 <body>
@@ -69,7 +73,6 @@
       mouse.x = e.clientX;
       mouse.y = e.clientY;
     });
-
     // Dot class for moving particles
     class Dot {
       constructor(x, y, vx, vy) {
@@ -109,7 +112,6 @@
         ctx.fill();
       }
     }
-
     // Create an array of dots
     const dots = [];
     const numDots = 120;
@@ -120,7 +122,6 @@
       let vy = (Math.random() - 0.5) * 1;
       dots.push(new Dot(x, y, vx, vy));
     }
-
     // Connect dots with lines that change color to purple shades on hover.
     function connectDots() {
       for (let i = 0; i < dots.length; i++) {
@@ -145,7 +146,6 @@
         }
       }
     }
-
     // Main animation loop
     function animate() {
       ctx.clearRect(0, 0, width, height);
@@ -157,13 +157,11 @@
       requestAnimationFrame(animate);
     }
     animate();
-
     // Adjust canvas size on window resize
     window.addEventListener('resize', () => {
       width = canvas.width = window.innerWidth;
       height = canvas.height = window.innerHeight;
     });
-
     // Typewriter effect for the overlay message
     const message = "Welcome to your Future Growth with Remote Assistance";
     const messageDiv = document.getElementById("message");
