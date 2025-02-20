@@ -5,12 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Interactive Future Growth</title>
   <style>
-    /* Fullscreen canvas and dark background */
+    /* Fullscreen background and canvas */
     body, html {
       margin: 0;
       padding: 0;
       overflow: hidden;
-      background: #111;
+      background: linear-gradient(135deg, #000, #333);
       font-family: monospace;
     }
     canvas {
@@ -20,7 +20,7 @@
       left: 0;
       z-index: 1;
     }
-    /* Centered overlay for the typewriter message and button */
+    /* Centered overlay for the message and button */
     #overlay {
       position: absolute;
       top: 50%;
@@ -28,33 +28,33 @@
       transform: translate(-50%, -50%);
       z-index: 2;
       text-align: center;
-      color: #cc99ff;  /* Legible purple shade */
+      color: lavender;
     }
-    #typewriter {
+    #message {
       font-size: 2rem;
       margin-bottom: 20px;
       white-space: nowrap;
       overflow: hidden;
-      border-right: 2px solid #cc99ff;
+      border-right: 2px solid lavender;
     }
     #advance {
       font-size: 1.2rem;
       cursor: pointer;
       padding: 10px 20px;
-      border: 2px solid #cc99ff;
+      border: 2px solid lavender;
       border-radius: 5px;
       transition: background 0.3s;
       display: inline-block;
     }
     #advance:hover {
-      background: rgba(204,153,255,0.2);
+      background: rgba(230, 230, 250, 0.2);
     }
   </style>
 </head>
 <body>
   <canvas id="canvas"></canvas>
   <div id="overlay">
-    <div id="typewriter"></div>
+    <div id="message"></div>
     <div id="advance" onclick="advance()">[Click to advance]</div>
   </div>
   <script>
@@ -70,45 +70,47 @@
       mouse.y = e.clientY;
     });
 
-    // Dot class with gentle movement
+    // Dot class for moving particles
     class Dot {
       constructor(x, y, vx, vy) {
         this.x = x;
         this.y = y;
         this.vx = vx;
         this.vy = vy;
-        this.radius = 3;
+        this.radius = 2;
       }
       update() {
         this.x += this.vx;
         this.y += this.vy;
-        // Bounce off edges
+        // Bounce off canvas edges
         if (this.x < 0 || this.x > width) this.vx = -this.vx;
         if (this.y < 0 || this.y > height) this.vy = -this.vy;
       }
       draw() {
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        let fillColor = '#fff'; // default white
+        // Default color white, shift to purple shades when near the mouse.
+        let distance = 999;
         if (mouse.x && mouse.y) {
           const dx = mouse.x - this.x;
           const dy = mouse.y - this.y;
-          const distance = Math.sqrt(dx * dx + dy * dy);
-          if (distance < 100) {
-            // Transition to a purple shade as the dot gets closer to the mouse
-            let factor = 1 - distance / 100;
-            let r = Math.floor(128 * factor);
-            let g = 0;
-            let b = Math.floor(128 + 127 * factor);
-            fillColor = `rgb(${r},${g},${b})`;
-          }
+          distance = Math.sqrt(dx * dx + dy * dy);
         }
-        ctx.fillStyle = fillColor;
+        if (distance < 100) {
+          // Transition from a light to deeper purple based on proximity.
+          let factor = 1 - distance / 100;
+          let r = Math.floor(80 * factor); // deep purple
+          let g = 0;
+          let b = Math.floor(128 + 127 * factor);
+          ctx.fillStyle = `rgb(${r},${g},${b})`;
+        } else {
+          ctx.fillStyle = '#fff';
+        }
         ctx.fill();
       }
     }
 
-    // Create an array of dots with random positions and velocities
+    // Create an array of dots
     const dots = [];
     const numDots = 120;
     for (let i = 0; i < numDots; i++) {
@@ -119,7 +121,7 @@
       dots.push(new Dot(x, y, vx, vy));
     }
 
-    // Draw lines connecting dots; change line color if near the mouse
+    // Connect dots with lines that change color to purple shades on hover.
     function connectDots() {
       for (let i = 0; i < dots.length; i++) {
         for (let j = i + 1; j < dots.length; j++) {
@@ -134,8 +136,7 @@
               const d2 = Math.sqrt((mouse.x - dots[j].x) ** 2 + (mouse.y - dots[j].y) ** 2);
               if (d1 < 100 || d2 < 100) nearMouse = true;
             }
-            let strokeColor = nearMouse ? `rgba(128,0,128,${opacity})` : `rgba(255,255,255,${opacity})`;
-            ctx.strokeStyle = strokeColor;
+            ctx.strokeStyle = nearMouse ? `rgba(128,0,128,${opacity})` : `rgba(255,255,255,${opacity})`;
             ctx.beginPath();
             ctx.moveTo(dots[i].x, dots[i].y);
             ctx.lineTo(dots[j].x, dots[j].y);
@@ -165,23 +166,23 @@
 
     // Typewriter effect for the overlay message
     const message = "Welcome to your Future Growth with Remote Assistance";
-    const typewriterDiv = document.getElementById("typewriter");
+    const messageDiv = document.getElementById("message");
     let index = 0;
     function typeWriter() {
       if (index < message.length) {
-        typewriterDiv.innerHTML += message.charAt(index);
+        messageDiv.innerHTML += message.charAt(index);
         index++;
-        setTimeout(typeWriter, 100);
+        setTimeout(typeWriter, 100); // Adjust typing speed here
       } else {
-        typewriterDiv.style.borderRight = "none";
+        messageDiv.style.borderRight = "none"; // remove caret when complete
       }
     }
+    // Start the typewriter effect after a brief delay
     setTimeout(typeWriter, 1000);
 
-    // Click-to-advance functionality
+    // Click to advance functionality - redirects to another page.
     function advance() {
-      // Redirect to another page; update the URL as needed
-      window.location.href = "next.html";
+      window.location.href = "next.html"; // Update URL as needed
     }
   </script>
 </body>
